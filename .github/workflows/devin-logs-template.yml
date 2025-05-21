@@ -1,0 +1,25 @@
+name: Devin Logs Workflow Template
+
+on:
+  workflow_call:
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: true
+  push:
+    branches:
+      - '**'
+  pull_request:
+    types: [opened, closed, reopened]
+
+jobs:
+  notify-slack:
+    if: github.actor == 'devin-ai-integration[bot]' 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar notificação para Slack
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \\"text\\": \\"🧠 *Devin fez push no repositório `${{ github.repository }}`*\\\\n👉 Commit: `${{ github.event.head_commit.message }}`\\",
+            \\"username\\": \\"Devin Logs\\",
+            \\"icon_emoji\\": \\":robot_face:\\"
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}
