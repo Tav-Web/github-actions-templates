@@ -13,13 +13,25 @@ on:
 
 jobs:
   notify-slack:
-    if: github.actor == 'devin-ai-integration[bot]'  
+    if: github.actor == 'devin-ai-integration[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Enviar notificação para Slack
         run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            TITLE="${{ github.event.pull_request.title }}"
+            URL="${{ github.event.pull_request.html_url }}"
+            BRANCH="${{ github.event.pull_request.head.ref }}"
+            ACTION="Pull Request"
+          else
+            TITLE="${{ github.event.head_commit.message }}"
+            URL="https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}"
+            BRANCH="${{ github.ref_name }}"
+            ACTION="Push"
+          fi
+
           curl -X POST --data-urlencode "payload={
             \"username\": \"Devin Logs\", 
-            \"text\": \"🧠 Devin atuou no repositório *${{ github.repository }}*\n👉 Ação: ${{ github.event_name }}\n💬 Commit/PR: ${{ github.event.head_commit.message || github.event.pull_request.title }}\", 
-            \"icon_emoji\": \":robot_face:\"
+            \"icon_emoji\": \":robot_face:\",
+            \"text\": \"🧠 *Devin executou uma ação no repositório* <https://github.com/${{ github.repository }}|${{ github.repository }}>\\n👉 Tipo de ação: *$ACTION*\\n🔀 Branch: <$URL|$BRANCH>\\n💬 Descrição: $TITLE\"
           }" ${{ secrets.SLACK_WEBHOOK_URL }}
