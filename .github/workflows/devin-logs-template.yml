@@ -31,7 +31,7 @@ jobs:
           fi
 
           curl -X POST --data-urlencode "payload={
-            \"username\": \"Devin Logs\", 
+            \"username\": \"Devin Logs\",
             \"icon_emoji\": \":robot_face:\",
-            \"text\": \"🧠 *Devin executou uma ação no repositório* <https://github.com/${{ github.repository }}|${{ github.repository }}>\\n👉 Tipo de ação: *$ACTION*\\n🔀 Branch: <$URL|$BRANCH>\\n💬 Descrição: $TITLE\"
+            \"text\": \"🤖 *Ação do Devin* no repositório <https://github.com/${{ github.repository }}|${{ github.repository }}>\\n\\n📌 Tipo: *$ACTION*\\n🔀 Branch: <$URL|$BRANCH>\\n🔗 Link: <$URL|Acessar>\\n\\n📝 Descrição:\\n$TITLE\"
           }" ${{ secrets.SLACK_WEBHOOK_URL }}
